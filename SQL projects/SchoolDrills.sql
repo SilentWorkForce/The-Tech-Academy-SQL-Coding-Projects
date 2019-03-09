@@ -1,11 +1,4 @@
 
-/*------------------------------------------------------------------------------------------------------------*/
-
-USE db_zoo
-
-DROP TABLE tbl_species, tbl_animalia, tbl_care, tbl_class, tbl_habitat, tbl_nutrition, tbl_order, tbl_specialist;
-DROP TABLE tbl_persons
-
 /*----------------------------------------Table Creation Start----------------------------------------------*/
 
 CREATE TABLE tbl_animalia (
