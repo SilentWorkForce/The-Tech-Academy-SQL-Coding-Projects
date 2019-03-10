@@ -1,4 +1,3 @@
-SELECT * FROM Person.address;
 
 USE AdventureWorks2014
 GO
