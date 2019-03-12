@@ -331,7 +331,7 @@ WHERE Books.title = 'TheLostTribe' AND Library_Branch.BranchName = 'Sharpstown'
 
 GO
 
-CREATE PROC Drill1 @bookTitle varchar(30),@branchName varchar(30)
+CREATE PROC Drill @bookTitle varchar(30),@branchName varchar(30)
 AS
 SELECT Book_Copies.Number_of_Copies,Books.Title,Library_Branch.BranchName
 FROM Book_Copies
@@ -341,11 +341,11 @@ WHERE Books.title = 'TheLostTribe' AND Library_Branch.BranchName = @branchName
 
 
 
-EXEC Drill1 @bookTitle = 'TheLostTribe', @branchName = 'Sharpstown'
+EXEC Drill @bookTitle = 'TheLostTribe', @branchName = 'Sharpstown'
 
 GO
 
-ALTER PROC Drill1 @bookTitle varchar(30) = NULL,@branchName varchar(30) = NULL
+ALTER PROC Drill @bookTitle varchar(30) = NULL,@branchName varchar(30) = NULL
 AS
 SELECT Book_Copies.Number_of_Copies,Books.Title,Library_Branch.BranchName
 FROM Book_Copies
@@ -353,5 +353,5 @@ INNER JOIN Books ON Book_Copies.BookID = Books.BookID
 INNER JOIN Library_Branch ON Book_Copies.BranchID = Library_Branch.BranchID
 WHERE Books.title = isNULL(@bookTitle,Books.Title) AND Library_Branch.BranchName = isNULL(@branchName, Library_Branch.BranchName)
 
-EXEC Drill1
+EXEC Drill
 
