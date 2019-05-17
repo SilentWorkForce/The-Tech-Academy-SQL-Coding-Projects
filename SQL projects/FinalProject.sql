@@ -281,8 +281,116 @@ INSERT INTO Book_Authors
 	('40','TomClancy')
 ;
 
-
 /*-----------------------------------Creating PROC---------------------------------*/
+
+
+
+/*Create All Stored Procedures----------------------------------------------------------*/
+
+/*PROCEDURE FOR SQL FINAL DRILL 1
+How many copies of the book titled "The Lost Tribe" 
+are owned by the library branch whose name is "Sharpstown"?*/
+GO
+
+CREATE PROC usp_cBooksIn @branch varchar(30) = 'Sharpstown', @title varchar(30) = 'The Lost Tribe'
+AS
+SELECT b.Title, Number_Of_Copies FROM BOOK_COPIES bc
+INNER JOIN LIBRARY_BRANCH lb ON bc.BranchID = lb.BranchID
+INNER JOIN BOOKS b ON bc.BookID = b.BookID 
+WHERE lb.BranchName = @branch AND b.Title = @title
+GO
+
+/*PROCEDURE FOR SQL FINAL DRILL 2
+How many copies of the book titled "The Lost Tribe" 
+are owned by each library branch?*/ 
+GO
+
+CREATE PROC usp_bookByBranch @title varchar(30) = 'The Lost Tribe'
+AS
+SELECT b.Title, Number_Of_Copies AS 'Copies', lb.BranchName AS 'Branch' FROM BOOK_COPIES bc
+INNER JOIN LIBRARY_BRANCH lb ON bc.BranchID = lb.BranchID
+INNER JOIN BOOKS b ON bc.BookID = b.BookID 
+WHERE b.Title = @title
+GO
+
+/*PROCEDURE FOR SQL FINAL DRILL 3
+Retrieve the names of all borrowers who do not have any books checked out.*/
+GO
+
+CREATE PROC usp_noBooks
+AS
+SELECT Name AS 'No Books On Loan' FROM BORROWER b
+LEFT JOIN BOOK_LOANS bl ON bl.CardNo = b.CardNo
+WHERE bl.BookID IS NULL
+GO
+
+/*PROCEDURE FOR SQL FINAL DRILL 4
+For each book that is loaned out from the "Sharpstown" branch and whose DueDate is 
+today, retrieve the book title, the borrower's name, and the borrower's address.*/
+GO
+
+CREATE PROC usp_dueTodayS
+AS
+SELECT Title, bo.Name, bo.Address FROM BOOKS b
+INNER JOIN BOOK_LOANS bl ON b.BookID = bl.BookID
+INNER JOIN LIBRARY_BRANCH lb on bl.BranchID = lb.BranchID
+INNER JOIN BORROWER bo on bl.CardNo = bo.CardNo
+WHERE lb.BranchName = 'Sharpstown' AND bl.DateDue = CONVERT(date,getDate())
+GO
+
+/*PROCEDURE FOR SQL FINAL DRILL 5
+For each library branch, retrieve the branch name and the total number of 
+books loaned out from that branch.*/
+GO
+
+CREATE PROC usp_booksLoaned
+AS
+SELECT BranchName, COUNT(*) AS 'Books On Loan' FROM LIBRARY_BRANCH lb
+INNER JOIN BOOK_LOANS bl on lb.BranchID = bl.BranchID
+GROUP BY BranchName HAVING COUNT(*) >= 0
+GO
+
+/*PROCEDURE FOR SQL FINAL DRILL 6
+Retrieve the names, addresses, and the number of books checked out for all borrowers
+who have more than five books checked out.*/
+GO
+
+CREATE PROC usp_hasLots
+AS
+SELECT Name, Address, COUNT(*) AS 'Books On Loan' FROM BORROWER b
+INNER JOIN BOOK_LOANS bl ON b.CardNo = bl.CardNo
+GROUP BY Name, Address HAVING COUNT(*) > 5
+GO
+
+/*PROCEDURE FOR SQL FINAL DRILL 7
+For each book authored (or co-authored) by "Stephen King", retrieve the title and the 
+number of copies owned by the library branch whose name is "Central".*/
+GO
+
+CREATE PROC usp_authorAtBranch
+AS
+SELECT Title, COUNT(*) AS 'Copies' FROM BOOKS b
+INNER JOIN BOOK_LOANS bl ON b.BookID = bl.BookID
+INNER JOIN BOOK_AUTHORS ba on b.BookID = ba.BookID
+INNER JOIN LIBRARY_BRANCH lb on bl.BranchID = lb.BranchID
+WHERE ba.AuthorName = 'Stephen King' AND lb.BranchName = 'Central'
+GROUP BY Title HAVING COUNT(*) > 0
+GO
+
+/*Executing all the procedures we created*/
+EXEC [dbo].[usp_cBooksIn]
+EXEC [dbo].[usp_bookByBranch]
+EXEC [dbo].[usp_noBooks]
+EXEC [dbo].[usp_dueTodayS]
+EXEC [dbo].[usp_booksLoaned]
+EXEC [dbo].[usp_hasLots]
+EXEC [dbo].[usp_authorAtBranch]
+
+
+
+
+
+
 
 
 SELECT * FROM Book_Copies 
